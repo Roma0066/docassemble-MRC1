@@ -1,0 +1,97 @@
+---
+objects:
+  - endpoint:
+---
+# welcome screen
+mandatory: True
+question: Welcome!
+subquestion: |
+  This service will create an application form court based on eligibility.
+
+  ***Disclaimer:***  
+  **This app does not give legal advice. All forms must be checked by a lawyer.**
+
+  If you continue you accept these terms.
+buttons:
+  - "accept and continue": continue
+  - "exit": exit
+    url: http://www.courts.sa.gov.au/Pages/default.aspx
+---
+question: |
+  Which Court?
+fields:
+  - no label: MRcourt_ok
+    datatype: radio
+    choices:
+     - Supreme Court
+     - District Court
+     - Magistrates Court
+     - Federal Court
+     - Federal Circut Court
+---
+mandatory: true
+code: |
+  if MRcourt_ok == 'Federal Court': 
+   eligible
+  elif MRcourt_ok == 'Federal Circut Court':
+    eligible
+  else: 
+    ineligible 
+---
+event: ineligible
+question: Sorry!
+subquestion:
+  Unfortunately this app only prepares forms for the *Federal Court* and the *Federal Circut Court*.
+buttons:
+  - Exit: exit
+    url: http://www.courts.sa.gov.au/Pages/default.aspx
+  - Restart: restart
+---
+event: eligible
+question: form creation.
+subquestion: |
+  Information Requested|Data Supplied
+  -------|-------
+  Applicants Name|${ MRappname }
+  Respondants Name|${ MRresname }
+  Date|${ MRdate }
+  State|${ MRstate }
+  Division|${ MRdivision }
+  Signature|${ MRsign }
+  Signature Capacity|${ MRcapacity }
+attachment:
+  - name: FCA form
+    docx template file: FCA_form001_20110801.docx
+    valid formats:
+     - pdf
+buttons:
+  - I'm done: exit
+    url: http://www.courts.sa.gov.au/Pages/default.aspx
+  - Do it again: restart
+---
+question: Form
+fields:
+  - Applicants Name: MRappname
+  - Respondants Name: MRresname
+  - Date: MRdate
+    datatype: date
+  - State: MRstate
+    datatype: radio
+    choices:
+    - South Australia
+    - Queensland
+    - Victoria
+    - New South Wales
+    - Western Australia
+    - Northern Territory
+    - Tasmania
+  - Division: MRdivision
+    datatype: radio
+    choices:
+    - Employment
+    - Corporations
+    - Criminal 
+    - General    
+  - Signature: MRsign
+  - Signatures Capacity: MRcapacity
+---
